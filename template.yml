@@ -1,0 +1,448 @@
+# This is the SAM template that represents the architecture of your serverless application
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
+AWSTemplateFormatVersion: 2010-09-09
+
+# This is the SAM template that represents the architecture of your serverless application
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Start from scratch starter project
+
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+Transform: AWS::Serverless-2016-10-31
+
+# Shared configuration for all resources, more in
+# https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    # The PermissionsBoundary allows users to safely develop with their function's permissions constrained
+    # to their current application. All the functions and roles in this application have to include it and
+    # it has to be manually updated when you add resources to your application.
+    # More information in https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html
+    PermissionsBoundary: !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:policy/${AppId}-${AWS::Region}-PermissionsBoundary"
+
+Parameters:
+  AppId:
+    Type: String
+
+# Resources declares the AWS resources that you want to include in the stack
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+Resources:
+  # Each Lambda function is defined by properties:
+  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+
+  writeReviewFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+        FunctionName: writeReview
+        CodeUri: ./
+        Handler: src/handlers/writeReviewHandler.writeReview
+        Runtime: nodejs14.x
+        MemorySize: 128
+        Timeout: 60
+        Description: A Lambda function that store the store data
+        Policies:
+            # Give Lambda basic execution Permission to the helloFromLambda
+            - AWSLambdaBasicExecutionRole
+            - S3WritePolicy:
+                BucketName: 42chelin-images
+            - DynamoDBCrudPolicy:
+                TableName: !Ref StoreTable
+        AutoPublishAlias : Dev
+
+  searchStoreWithKakaoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: searchStoreWithKakao
+      CodeUri: ./
+      Handler: src/handlers/searchStoreWithKakaoHandler.searchStoreWithKakao
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+      AutoPublishAlias : Dev
+
+  getStoreInfoWithKakaoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getStoreInfoWithKakao
+      CodeUri: ./
+      Handler: src/handlers/getStoreInfoWithKakaoHandler.getStoreInfoWithKakao
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that store the store data
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+      AutoPublishAlias : Dev
+
+  getStoreDataMapFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getStoreDataMap
+      CodeUri: ./
+      Handler: src/handlers/getStoreDataMapHandler.getStoreDataMap
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBReadPolicy:
+            TableName: !Ref StoreTable
+      AutoPublishAlias : Dev
+      
+  getStoreDetailDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getStoreDetailData
+      CodeUri: ./
+      Handler: src/handlers/getStoreDetailDataHandler.getStoreDetailData
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBReadPolicy:
+            TableName: !Ref StoreTable
+      AutoPublishAlias : Dev
+  
+  updateStoreDetailDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+        FunctionName: updateStoreDetailData
+        CodeUri: ./
+        Handler: src/handlers/updateStoreDetailDataHandler.updateStoreDetailData
+        Runtime: nodejs14.x
+        MemorySize: 128
+        Timeout: 60
+        Description: A Lambda function that get the data of specific store
+        Policies:
+          # Give Lambda basic execution Permission to the helloFromLambda
+          - AWSLambdaBasicExecutionRole
+          - DynamoDBCrudPolicy:
+              TableName: !Ref StoreTable
+        AutoPublishAlias : Dev
+
+  searchStoreDataFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: searchStoreData
+      CodeUri: ./
+      Handler: src/handlers/searchStoreDataHandler.searchStoreData
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBReadPolicy:
+            TableName: !Ref StoreTable
+      AutoPublishAlias : Dev
+
+  updateReviewFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: updateReview
+      CodeUri: ./
+      Handler: src/handlers/updateReviewHandler.updateReviewData
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StoreTable
+        - S3CrudPolicy:
+            BucketName: 42chelin-images
+      AutoPublishAlias : Dev
+
+  deleteReviewFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: deleteReview
+      CodeUri: ./
+      Handler: src/handlers/deleteReviewHandler.deleteReviewData
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StoreTable
+        - S3CrudPolicy:
+            BucketName: 42chelin-images
+      AutoPublishAlias : Dev
+
+  getRandomStoreFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getRandomStore
+      CodeUri: ./
+      Handler: src/handlers/getRandomStoreHandler.getRandomStore
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBReadPolicy:
+            TableName: !Ref StoreTable
+      AutoPublishAlias : Dev
+
+  toggleLikeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: toggleLike
+      CodeUri: ./
+      Handler: src/handlers/toggleLikeHandler.toggleLike
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref StoreTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserTable
+      AutoPublishAlias : Dev
+
+  resizeImageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: resizeImage
+      CodeUri: ./
+      Handler: src/handlers/resizeImageHandler.resizeImage
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+      AutoPublishAlias : Dev
+
+  registerUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: registerUser
+      CodeUri: ./
+      Handler: src/handlers/registerUserHandler.registerUser
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBReadPolicy:
+            TableName: !Ref UserTable
+        - DynamoDBWritePolicy:
+            TableName: !Ref UserTable
+      AutoPublishAlias : Dev
+
+  registerUserTestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: registerUserTest
+      CodeUri: ./
+      Handler: src/handlers/registerUserHandler.registerUserTest
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBReadPolicy:
+            TableName: !Ref UserTable
+        - DynamoDBWritePolicy:
+            TableName: !Ref UserTable
+      AutoPublishAlias : Dev
+
+  unregisterUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: unregisterUser
+      CodeUri: ./
+      Handler: src/handlers/unregisterUserHandler.unregisterUser
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserTable
+      AutoPublishAlias : Dev
+
+  loginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: login
+      CodeUri: ./
+      Handler: src/handlers/loginHandler.login
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBReadPolicy:
+            TableName: !Ref UserTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TokenTable
+      AutoPublishAlias : Dev
+  
+  refreshTokenFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: refreshToken
+      CodeUri: ./
+      Handler: src/handlers/refreshTokenHandler.refreshToken
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBReadPolicy:
+            TableName: !Ref UserTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TokenTable
+      AutoPublishAlias : Dev
+  
+  resetPasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: resetPassword
+      CodeUri: ./
+      Handler: src/handlers/resetPasswordHandler.resetPassword
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserTable
+      AutoPublishAlias : Dev
+
+  changePasswordFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: changePassword
+      CodeUri: ./
+      Handler: src/handlers/changePasswordHandler.changePassword
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBReadPolicy:
+            TableName: !Ref UserTable
+        - DynamoDBWritePolicy:
+            TableName: !Ref UserTable
+      AutoPublishAlias : Dev
+
+  getMyFavoritesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getMyFavorites
+      CodeUri: ./
+      Handler: src/handlers/getMyFavoritesHandler.getMyFavorites
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 60
+      Description: A Lambda function that get the data of specific store
+      Policies:
+        # Give Lambda basic execution Permission to the helloFromLambda
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBReadPolicy:
+            TableName: !Ref UserTable
+        - DynamoDBReadPolicy:
+            TableName: !Ref StoreTable
+      AutoPublishAlias : Dev
+
+
+  #DynamoDB table to store item: {id: <ID>, name: <NAME>}
+  StoreTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 42chelin-stores
+      AttributeDefinitions:
+        - AttributeName: storeID
+          AttributeType: S
+        - AttributeName: storeAddress
+          AttributeType: S
+      KeySchema:
+        - AttributeName: storeID
+          KeyType: HASH
+        - AttributeName: storeAddress
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
+  UserTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 42chelin-users
+      AttributeDefinitions:
+        - AttributeName: clusterName
+          AttributeType: S
+      KeySchema:
+        - AttributeName: clusterName
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
+  TokenTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 42chelin-tokens
+      AttributeDefinitions:
+        - AttributeName: clusterName
+          AttributeType: S
+        - AttributeName: issueDate
+          AttributeType: S
+      KeySchema:
+        - AttributeName: clusterName
+          KeyType: HASH
+        - AttributeName: issueDate
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+      TimeToLiveSpecification:
+        AttributeName: timeToLive
+        Enabled: true

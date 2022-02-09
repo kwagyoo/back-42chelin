@@ -1,0 +1,23 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      # Install all dependencies (including dependencies for running tests)
+      - npm install
+      - npm install node-fetch@^2.6.5
+      - npm install axios
+      - npm install --sharp-install-force sharp
+      - npm install jsonwebtoken
+      - npm install bcryptjs
+      - npm install nodemailer
+  pre_build:
+    commands:
+      # Remove all dependencies not needed for the Lambda deployment package (the packages from devDependencies in package.json)
+      - npm prune --production
+  build:
+    commands:
+      # Use AWS SAM to package the application by using AWS CloudFormation
+      - aws cloudformation package --template template.yml --s3-bucket $S3_BUCKET --output-template-file template-export.yml
+artifacts:
+  files:
+    - template-export.yml
